@@ -125,7 +125,7 @@ select{flex:none;font:inherit;font-size:13px;font-weight:700;color:var(--ink);ba
 .facts{list-style:none;margin:0 0 8px;padding:0 0 8px;border-bottom:1px solid var(--line)}
 .facts li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;font-weight:700;line-height:1.5}
 .facts svg{flex:none;width:18px;height:18px;margin-top:1px;fill:none;stroke:var(--green);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.plans{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;margin-top:auto;padding-top:12px}
+.plans{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
 .plan{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .plan .tag{grid-row:1/3;align-self:center;font-size:12px;font-weight:900;padding:4px 8px;border-radius:8px;color:#fff;text-align:center;min-width:52px}
 .plan .tag.d{background:var(--weekday)}
@@ -496,7 +496,7 @@ function plan(p){
     <div class="each"><b>${yen(p.each)}<small>円</small></b><span>/人</span></div>
     <div class="total">${total}${sold ? "" : ` ・<span class="left">残り${p.left}枚</span>`}</div>
     ${sold ? `<span class="go done">売り切れ</span>` : `<a class="go" href="${BASE_URL + encodeURIComponent(p.id)}">購入する</a>`}
-    ${p.note ? `<div class="note">※ ${esc(p.note)}</div>` : ""}
+    ${p.note ? `<div class="note">※ ${esc(p.note.replace(/^※\s*/, ""))}</div>` : ""}
   </li>`;
 }
 
