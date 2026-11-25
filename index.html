@@ -54,6 +54,14 @@ a{color:inherit}
 .hero h1 .en em{font-style:normal;color:var(--lime)}
 .hero h1 .ja{display:block;margin-top:18px;font-size:clamp(22px,4.6vw,36px);line-height:1.35}
 .hero h1 .ja b{color:var(--lime);font-family:var(--num);font-size:1.35em;font-weight:800;margin:0 2px;font-variant-numeric:tabular-nums}
+.period{display:inline-block;margin:22px 0 0;padding:14px 22px 16px;border:2px solid var(--lime);border-radius:18px;background:rgba(0,0,0,.18)}
+.period p{margin:0}
+.period .until{font-size:clamp(17px,4.2vw,22px);font-weight:900;color:#fff;line-height:1.3}
+.period .until b{color:var(--lime);font-family:var(--num);font-weight:800;font-size:1.45em;font-variant-numeric:tabular-nums;margin-right:4px;letter-spacing:.01em}
+.period .until small{font-family:inherit;font-size:.62em;font-weight:900;margin:0 2px}
+.period .hurry{margin-top:8px;font-size:clamp(14px,3.6vw,17px);font-weight:700;color:#fff;line-height:1.5}
+.period .nw{white-space:nowrap}
+.period .hurry b{display:inline-block;background:var(--sale);color:#fff;font-weight:900;padding:1px 9px;border-radius:6px;margin:0 4px}
 .lead{margin:14px 0 0;max-width:560px;font-size:15px;color:rgba(255,255,255,.86)}
 .cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--sale);color:#fff;text-decoration:none;font-weight:900;font-size:17px;padding:16px 32px;border-radius:999px;box-shadow:0 10px 24px rgba(255,90,31,.35);transition:transform .15s ease}
 .cta:hover{transform:translateY(-2px)}
@@ -223,6 +231,10 @@ footer a{margin:0 8px;color:inherit}
           <span class="en">Play <em>More</em><br>Pay Less</span>
           <span class="ja">全国のゴルフ場を、<br>1人<b id="heroEach">—</b>円から。</span>
         </h1>
+        <div class="period">
+          <p class="until"><b>12/10<small>（木）</small>23:59</b>まで販売</p>
+          <p class="hurry">ほとんどが<b>1枚限り</b>。<span class="nw">人気コースから売り切れます</span></p>
+        </div>
         <p class="lead">U39 GOLFの優待プレー券は、全国のゴルフ場で使えるお得なプレー券。仲間と4人で回れば、1人あたりはこの価格。いつものゴルフを、もっと気軽に。</p>
         <div>
           <a class="cta" href="#tickets">優待券をさがす</a>
