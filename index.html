@@ -158,6 +158,9 @@ select{flex:none;font:inherit;font-size:13px;font-weight:700;color:var(--ink);ba
 .more-sold{display:block;margin:20px auto 0;appearance:none;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:inherit;font-size:14px;font-weight:700;padding:10px 22px;border-radius:999px;cursor:pointer}
 .more-sold:hover{border-color:var(--green);color:var(--green)}
 .empty{text-align:center;color:var(--muted);padding:32px 0}
+.empty.wait{background:var(--paper);border:2px dashed var(--green);border-radius:16px;padding:28px 18px;color:var(--ink);font-size:14px;line-height:1.7;margin-top:12px}
+.empty.wait .nw{white-space:nowrap;margin-left:.3em}
+.empty.wait b{display:block;font-size:clamp(18px,4.4vw,22px);font-weight:900;color:var(--green);margin-bottom:8px}
 
 /* steps */
 .steps{background:var(--green-ink);color:#fff}
@@ -335,6 +338,12 @@ const DATA_URL = "data/tickets.json";
 const COURSES_URL = "data/courses.json";   // ゴルフ場名 → 市区町村・写真・紹介文・アクセス
 const BASE_URL = "https://u39-golf.jp/discount-purchase/";
 const REFRESH_MS = 60 * 1000;
+// 販売開始日時（毎月書き換える）。開始前〜開始15分後まで券が0件なら「まもなく販売開始」を出し、10秒ごとに読み直す
+const SALE_START = new Date("2026-11-25T18:00:00+09:00");
+const WAIT_REFRESH_MS = 10 * 1000;
+let ticketCount = 0;
+const waiting = () => ticketCount === 0 && Date.now() < SALE_START.getTime() + 15 * 60 * 1000;
+const startLabel = () => `${SALE_START.getMonth() + 1}/${SALE_START.getDate()}（${"日月火水木金土"[SALE_START.getDay()]}）${SALE_START.getHours()}:${String(SALE_START.getMinutes()).padStart(2, "0")}`;
 
 const AREAS = {
   "北海道・東北":["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県"],
@@ -363,6 +372,7 @@ async function load(){
     return;
   }
   // 券をゴルフ場ごとにまとめる（平日券・土日祝券を1枚のカードに）
+  ticketCount = data.tickets.length;
   const byCourse = new Map();
   data.tickets.forEach(t => {
     if(!byCourse.has(t.course)){
@@ -443,6 +453,11 @@ function render(){
   else live.sort((a, b) => a.prefId - b.prefId || a.name.localeCompare(b.name, "ja"));
   const nTickets = live.reduce((s, g) => s + g.plans.filter(onSale).length, 0);
   $("result").textContent = `${live.length}コース・${nTickets}種類の優待券を販売中`;
+  if(waiting()){
+    $("result").textContent = "まもなく販売開始";
+    list.innerHTML = `<div class="empty wait"><b>優待券は<span class="nw">${startLabel()}</span><span class="nw">販売開始</span></b>準備ができ次第、このページに自動で表示されます。<br>ページを開いたままお待ちください。</div>`;
+    return;
+  }
   if(!live.length && !soldGroups.length){
     list.innerHTML = `<div class="empty">この条件の優待券は現在ありません。</div>`;
     return;
@@ -541,8 +556,13 @@ function setSale(sale){
 // スマホ下部のバーは、券一覧が見えている間は隠す
 new IntersectionObserver(es => $("bar").classList.toggle("hide", es[0].isIntersecting), {rootMargin:"0px 0px -40% 0px"}).observe($("tickets"));
 
-load();
-setInterval(() => { if(!document.hidden) load(); }, REFRESH_MS);
+// 販売開始の直前・直後は10秒ごと、それ以外は1分ごとに読み直す
+async function tick(){
+  if(!document.hidden) await load();
+  const soon = waiting() && Date.now() > SALE_START.getTime() - 2 * 60 * 1000;
+  setTimeout(tick, soon ? WAIT_REFRESH_MS : REFRESH_MS);
+}
+tick();
 </script>
 </body>
 </html>
