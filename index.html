@@ -236,7 +236,7 @@ footer a{margin:0 8px;color:inherit}
           <span class="ja">全国のゴルフ場を、<br>1人<b id="heroEach">—</b>円から。</span>
         </h1>
         <div class="period">
-          <p class="until"><b>12/10<small>（木）</small>23:59</b>まで販売</p>
+          <p class="until" id="until"><b>12/10<small>（木）</small>23:59</b>まで販売</p>
           <p class="hurry">ほとんどが<b>1枚限り</b>。<span class="nw">人気コースから売り切れます</span></p>
         </div>
         <p class="lead">U39 GOLFの優待プレー券は、全国のゴルフ場で使えるお得なプレー券。仲間と4人で回れば、1人あたりはこの価格。いつものゴルフを、もっと気軽に。</p>
@@ -453,6 +453,13 @@ function render(){
   else live.sort((a, b) => a.prefId - b.prefId || a.name.localeCompare(b.name, "ja"));
   const nTickets = live.reduce((s, g) => s + g.plans.filter(onSale).length, 0);
   $("result").textContent = `${live.length}コース・${nTickets}種類の優待券を販売中`;
+  // 販売開始前は、ヒーローの販売期限の行を「◯/◯（◯）18:00販売開始」に差し替える
+  const untilEl = $("until");
+  untilEl.dataset.orig ??= untilEl.innerHTML;
+  const S = SALE_START, hm = `${S.getHours()}:${String(S.getMinutes()).padStart(2, "0")}`;
+  untilEl.innerHTML = waiting()
+    ? `<b>${S.getMonth() + 1}/${S.getDate()}<small>（${"日月火水木金土"[S.getDay()]}）</small>${hm}</b>販売開始`
+    : untilEl.dataset.orig;
   if(waiting()){
     $("result").textContent = "まもなく販売開始";
     list.innerHTML = `<div class="empty wait"><b>優待券は<span class="nw">${startLabel()}</span><span class="nw">販売開始</span></b>準備ができ次第、このページに自動で表示されます。<br>ページを開いたままお待ちください。</div>`;
